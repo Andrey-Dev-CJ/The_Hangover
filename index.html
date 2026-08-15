@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>МАЛЬЧИШНИК • Операция «Последний холостяк» • 18+</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>♠</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;0,900;1,700;1,900&family=Jost:wght@300;400;500;600&family=PT+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<!-- ======== ВЕРХНЯЯ ПЛАНКА ======== -->
+<header class="topbar">
+  <div class="brand">LA FAMIGLIA <b>✦</b> <span>МАЛЬЧИШНИК</span></div>
+  <nav class="topnav">
+    <a href="#bar">Бар</a>
+    <a href="#food">Кухня</a>
+    <a href="#plan">План</a>
+    <a href="#games">Игры</a>
+    <a href="#tg" class="js-tg">Связь</a>
+  </nav>
+</header>
+
+<!-- ======== ГЕРОЙ: СЕКРЕТНАЯ ПОВЕСТКА ======== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="poster">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+
+      <div class="hero-grid">
+        <div>
+          <p class="hero-eyebrow mono">Совершенно секретно <span class="dot">●</span> Только для своих <span class="dot">●</span> Дело № 21-08/М</p>
+          <h1 id="title">МАЛЬЧИШНИК</h1>
+          <p class="sub" id="hero-sub"></p>
+          <p class="meta mono" id="event-meta"></p>
+
+          <div class="cd" id="cd" aria-label="Обратный отсчёт до начала">
+            <div class="cd-cell"><b id="cd-d">--</b><span id="cd-dl">дней</span></div>
+            <div class="cd-cell"><b id="cd-h">--</b><span>часов</span></div>
+            <div class="cd-cell"><b id="cd-m">--</b><span>минут</span></div>
+            <div class="cd-cell"><b id="cd-s">--</b><span>секунд</span></div>
+          </div>
+
+          <div class="hero-cta">
+            <a href="#bar" class="btn">Барная карта ↓</a>
+            <a href="#tg" class="btn red js-tg">Вступить в Семью →</a>
+          </div>
+        </div>
+
+        <figure class="don-frame rv" style="--d:.2s">
+          <div class="stamp">К прочтению обязательно</div>
+          <div class="don-oval ph kb">
+            <img id="don-img" src="https://picsum.photos/seed/mafia-don-portrait/600/760" alt="Портрет Дона">
+          </div>
+          <figcaption class="don-cap" id="don-cap"></figcaption>
+        </figure>
+      </div>
+
+      <div class="codex rv" id="codex" style="--d:.3s"></div>
+    </div>
+  </div>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-inner" id="ticker"></div>
+  </div>
+</section>
+
+<!-- ======== ГЛАВА I · БАРНАЯ КАРТА ======== -->
+<section class="section" id="bar">
+  <div class="wrap">
+    <p class="kicker mono rv">Глава I · чем поят семью</p>
+    <div class="paper rv" style="--d:.1s">
+      <span class="pin" style="top:14px;left:14px"></span>
+      <span class="pin" style="top:14px;right:14px"></span>
+
+      <div class="menu-head">
+        <p class="mh-top">Bar della Famiglia · только крепкое</p>
+        <h2 class="lm rv"><span>Барная карта</span></h2>
+        <p class="mh-sub">водка · виски · джин · шоты — мягкое здесь не подают</p>
+        <p class="suits">♠ ♥ ♦ ♣</p>
+      </div>
+
+      <div class="bar-grid">
+        <div id="bar-groups"><!-- крепкая классика из data.js --></div>
+        <div id="bar-right">
+          <div id="bar-shots"><!-- шоты из data.js --></div>
+
+          <div class="drum rv" style="--d:.15s">
+            <span class="drum-stamp" id="drum-stamp">Штраф</span>
+            <h4>Штрафной барабан</h4>
+            <p class="dh">рулетка для провинившихся и смелых</p>
+            <div class="slot" id="slot">Нажми «Крутить» — и прими свою судьбу</div>
+            <button class="btn" id="spin" type="button">Крутить ✦</button>
+          </div>
+
+          <p class="bar-note" id="bar-note"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== ГЛАВА II · КУХНЯ ======== -->
+<section class="section alt" id="food">
+  <div class="wrap">
+    <p class="kicker mono rv">Глава II · кухня семьи</p>
+    <h2 class="lm rv"><span>Закуски, <em>достойные дона</em></span></h2>
+
+    <div class="food-grid">
+      <div id="food-featured"><!-- суши-торт из data.js --></div>
+      <div class="food-col" id="food-cards"><!-- пицца, гренки… из data.js --></div>
+    </div>
+
+    <p class="sides rv" id="food-sides" style="--d:.1s"></p>
+  </div>
+</section>
+
+<!-- ======== ГЛАВА III · ПЛАН ОПЕРАЦИИ ======== -->
+<section class="section" id="plan">
+  <div class="wrap">
+    <div class="plan-grid">
+      <div class="plan-rail">
+        <p class="kicker mono rv">Глава III · оперативный план</p>
+        <h2 class="lm rv"><span>План <em>операции</em></span></h2>
+        <p class="rv" style="--d:.1s">Вечер ведётся по минутам, как хорошее ограбление. Опоздание карается штрафным шотом. Самоволка — двумя.</p>
+        <div class="plan-note rv" style="--d:.2s">
+          <span class="mono">Явочный лист</span>
+          <ul id="plan-rules"></ul>
+        </div>
+      </div>
+
+      <ol class="steps" id="steps">
+        <span class="prog" id="prog"></span>
+        <!-- пункты программы из data.js -->
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ======== ГЛАВА IV · ИГРЫ ======== -->
+<section class="section alt" id="games">
+  <div class="wrap">
+    <p class="kicker center mono rv">Глава IV · интерактив</p>
+    <h2 class="lm rv" style="text-align:center"><span>Игры, в которые <em>играет семья</em></span></h2>
+    <div class="games" id="games"><!-- карточки игр из data.js --></div>
+  </div>
+</section>
+
+<!-- ======== ГЛАВА V · ТЕЛЕГРАММА ======== -->
+<section class="section" id="tg">
+  <div class="wrap">
+    <p class="kicker center mono rv">Глава V · связь с семьёй</p>
+    <h2 class="lm rv" style="text-align:center"><span>Вступи <em>в чат Семьи</em></span></h2>
+
+    <div class="telegram paper rv" style="--d:.15s">
+      <span class="pin"></span>
+      <div class="tg-head"><span>Телеграмма № 21-08/М</span><span><b>Срочно</b> · закрытый канал</span></div>
+      <div class="tg-body">
+        <p class="tg-to">Кому: приглашённым на мальчишник</p>
+        <p class="tg-text">Точка сбора, пароли, явки и фотоотчёты — всё в <span class="hl">закрытом чате Семьи</span>. Подтверди явку до заката. Опоздавших вычислим по гренкам.</p>
+        <p class="tg-sign">— Дон-Организатор, собственной рукой</p>
+      </div>
+      <div class="tg-foot">
+        <div class="seal" aria-hidden="true">♠</div>
+        <span class="tg-handle" id="tg-handle"></span>
+        <a href="#tg" class="btn red big js-tg" id="tg-btn">Открыть Telegram →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== ФУТЕР ======== -->
+<footer>
+  <div class="wrap">
+    <div class="f-suits" aria-hidden="true">♠ ♥ ♦ ♣</div>
+    <p class="f-omerta">Omertà. О вечере не узнает никто. Кроме нас.</p>
+    <p class="f-line">La Famiglia <i>✦</i> мальчишник <i>✦</i> 18+ <i>✦</i> пей ответственно — наутро стыдно не будет</p>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
