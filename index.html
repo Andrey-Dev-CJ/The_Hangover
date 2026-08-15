@@ -94,7 +94,10 @@
             <span class="drum-stamp" id="drum-stamp">Штраф</span>
             <h4>Штрафной барабан</h4>
             <p class="dh">рулетка для провинившихся и смелых</p>
-            <div class="slot" id="slot">Нажми «Крутить» — и прими свою судьбу</div>
+            <div class="slot-window" aria-live="polite">
+              <div class="slot-reel" id="slot-reel"></div>
+              <span class="payline" aria-hidden="true"></span>
+            </div>
             <button class="btn" id="spin" type="button">Крутить ✦</button>
           </div>
 
@@ -111,7 +114,8 @@
     <p class="kicker mono rv">Глава II · кухня семьи</p>
     <h2 class="lm rv"><span>Закуски, <em>достойные дона</em></span></h2>
 
-    <div class="food-grid">
+    <!-- было: food-grid с двумя колонками food-featured / food-cards -->
+    <div class="food-grid" id="food-grid"><!-- суши-торт и карточки из data.js --></div>
       <div id="food-featured"><!-- суши-торт из data.js --></div>
       <div class="food-col" id="food-cards"><!-- пицца, гренки… из data.js --></div>
     </div>
@@ -183,8 +187,8 @@
   </div>
 </footer>
 
-<script src="js/config.js"></script>
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
+<script src="js/config.js?v=2"></script>
+<script src="js/data.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
 </body>
 </html>

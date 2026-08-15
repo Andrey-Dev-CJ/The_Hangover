@@ -18,7 +18,7 @@ const CONFIG = {
   place: "Штаб-квартира Семьи",
 
   // Портрет «Дона» и подписи под ним
-  donImage:    "https://picsum.photos/seed/mafia-don-portrait/600/760",
+  donImage:    "img/don.jpg",
   donCaption:  "Разыскивается Дон-холостяк",
   donCaption2: "живым, весёлым и трезвым — до поры",
 };

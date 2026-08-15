@@ -64,10 +64,11 @@ $("#codex").innerHTML = DATA.codex.map(c =>
 })();
 
 /* ---------- 6. Кухня ---------- */
+/* ---------- 6. Кухня ---------- */
 (function setupFood(){
   const f = DATA.food.featured;
-  $("#food-featured").innerHTML = `
-    <article class="food-main paper rv" style="--d:.1s">
+  const featuredHTML = `
+    <article class="food-main paper rv" style="--d:.05s">
       <span class="pin" style="top:-7px;left:50%;margin-left:-7px"></span>
       <div class="ph kb"><img src="${esc(f.img)}" alt="${esc(f.alt)}"></div>
       <div class="fc">
@@ -78,8 +79,8 @@ $("#codex").innerHTML = DATA.codex.map(c =>
       </div>
     </article>`;
 
-  $("#food-cards").innerHTML = DATA.food.cards.map((c, i) => `
-    <article class="food-card paper rv" style="--d:${(.15 + i * .05).toFixed(2)}s">
+  const cardsHTML = DATA.food.cards.map((c, i) => `
+    <article class="food-card paper rv" style="--d:${(.1 + i * .06).toFixed(2)}s">
       <div class="ph kb"><img src="${esc(c.img)}" alt="${esc(c.alt)}"></div>
       <div class="fc">
         <h3>${esc(c.title)}</h3>
@@ -90,6 +91,8 @@ $("#codex").innerHTML = DATA.codex.map(c =>
           </div>`).join("")}
       </div>
     </article>`).join("");
+
+  $("#food-grid").innerHTML = featuredHTML + cardsHTML;
 
   $("#food-sides").innerHTML =
     "К столу также подают: " + DATA.food.sides.map(s => esc(s)).join(' <i>✦</i> ');
@@ -204,27 +207,50 @@ $("#games-grid").innerHTML = DATA.games.map((g, i) => `
 })();
 
 /* ---------- 13. Штрафной барабан ---------- */
+/* ---------- 13. Штрафной барабан (лента сверху вниз, как в слотах) ---------- */
 (function setupDrum(){
   const F = DATA.bar.fanty;
-  const btn = $("#spin"), slot = $("#slot"), stamp = $("#drum-stamp");
-  let busy = false;
+  if (!F.length) return;
+  const btn = $("#spin"), reel = $("#slot-reel"), stamp = $("#drum-stamp"), win = reel.parentElement;
+  const H = 64, REPEAT = 4, N = F.length;
+
+  // лента: фанты, повторённые несколько раз; длинный текст — мельче шрифт
+  reel.innerHTML = Array.from({ length: REPEAT }, () =>
+    F.map(t => `<div class="cell${t.length > 44 ? " len3" : t.length > 28 ? " len2" : ""}">${esc(t)}</div>`).join("")
+  ).join("");
+
+  const centerT = i => win.clientHeight / 2 - H / 2 - i * H;
+  let current = 0, busy = false;
+  reel.style.transform = `translateY(${centerT(0)}px)`;
+  addEventListener("resize", () => { reel.style.transform = `translateY(${centerT(current)}px)`; });
+
+  const hit = () => {
+    stamp.classList.add("hit");
+    setTimeout(() => stamp.classList.remove("hit"), 1400);
+  };
+
   btn.addEventListener("click", () => {
-    if (busy || !F.length) return;
-    busy = true;
-    const fin = F[Math.random() * F.length | 0];
-    const done = () => {
-      slot.textContent = fin; slot.classList.remove("spin");
-      stamp.classList.add("hit");
-      setTimeout(() => stamp.classList.remove("hit"), 1400);
-      busy = false;
-    };
-    if (REDUCED) { done(); return; }
-    slot.classList.add("spin");
-    let i = 0, steps = 24, delay = 55;
-    (function step(){
-      slot.textContent = F[i++ % F.length];
-      if (i < steps) { delay *= 1.1; setTimeout(step, delay); } else done();
-    })();
+    if (busy) return; busy = true;
+    const r = Math.random() * N | 0;          // выпавший фант
+    const f = r;                              // финальная позиция (первая копия)
+    const s = Math.min(current + 3 * N, REPEAT * N - 1); // старт глубоко в ленте
+    const from = centerT(s), to = centerT(f); // лента поедет СВЕРХУ ВНИЗ
+
+    if (REDUCED) {
+      current = f;
+      reel.style.transform = `translateY(${to}px)`;
+      hit(); busy = false; return;
+    }
+
+    const dur = 3800 + Math.random() * 800, t0 = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 4); // разгон и долгое «докачивание»
+    reel.style.transform = `translateY(${from}px)`;
+    (function frame(now){
+      const p = Math.min(1, (now - t0) / dur);
+      reel.style.transform = `translateY(${from + (to - from) * ease(p)}px)`;
+      if (p < 1) requestAnimationFrame(frame);
+      else { current = f; hit(); busy = false; }
+    })(t0);
   });
 })();
 

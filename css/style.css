@@ -103,15 +103,22 @@ html.js .rv.in .lm>span, html.js .in.lm>span{transform:none}
 .corner.tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
 .corner.bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
 .corner.br{bottom:-1px;right:-1px;border-left:0;border-top:0}
-.hero-grid{display:grid;grid-template-columns:1.25fr .85fr;gap:clamp(28px,4vw,60px);align-items:center}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:clamp(24px,3vw,48px);align-items:center}
+.hero-grid>div:first-child{min-width:0}
 .hero-eyebrow{color:var(--red);font-size:.78rem;margin-bottom:22px}
 .hero-eyebrow .dot{color:var(--gold);animation:blink 1.6s steps(2) infinite}
 @keyframes blink{50%{opacity:.15}}
-.hero h1{font-size:clamp(3rem,9.2vw,7.2rem);letter-spacing:.03em;color:var(--cream);
+.hero h1{font-size:clamp(2.4rem,7.5vw,5rem);letter-spacing:.03em;color:var(--cream);
   text-shadow:0 2px 0 rgba(0,0,0,.6),0 0 40px rgba(201,162,39,.18);min-height:1.05em}
 .hero .sub{font-family:var(--disp);font-style:italic;font-weight:700;font-size:clamp(1.05rem,2.2vw,1.5rem);color:var(--gold-hi);margin:14px 0 10px}
 .hero .meta{color:rgba(239,230,207,.75);font-size:.85rem;margin-bottom:30px}
 .hero .meta b{color:var(--cream);letter-spacing:.2em}
+
+/* портрет Дона */
+.don-frame{width:100%;max-width:400px;margin:0 auto}
+.don-oval{border-radius:50%/44%;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/5}
+.don-cap{text-align:center;padding:14px 8px 4px;font-family:var(--mono);font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.don-cap small{display:block;color:rgba(239,230,207,.55);margin-top:5px;letter-spacing:.14em}
 
 /* отсчёт до часа Х */
 .cd{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:34px}
@@ -184,40 +191,88 @@ html.js .rv.in .lm>span, html.js .in.lm>span{transform:none}
 .bar-note b{color:var(--red)}
 
 /* штрафной барабан */
-.drum{margin-top:22px;border:1px dashed rgba(36,26,16,.45);padding:24px;text-align:center;position:relative}
-.drum h4{font-size:1.35rem;color:var(--ink);margin-bottom:4px}
-.drum .dh{font-family:var(--mono);font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(36,26,16,.55);margin-bottom:16px}
-.slot{font-family:var(--mono);font-size:clamp(.85rem,2vw,1.05rem);letter-spacing:.06em;background:rgba(36,26,16,.08);
-  border:1px solid rgba(36,26,16,.3);box-shadow:inset 0 3px 10px rgba(36,26,16,.15);
-  padding:18px 16px;min-height:64px;display:flex;align-items:center;justify-content:center;color:var(--ink)}
-.slot.spin{animation:slotsh .12s linear infinite}
-@keyframes slotsh{50%{opacity:.55}}
-.drum .btn{margin-top:18px;background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.drum .btn:hover{background:var(--red);border-color:var(--red);box-shadow:0 12px 24px rgba(163,32,32,.3)}
-.drum-stamp{position:absolute;top:-16px;right:14px;border:2px solid var(--red);color:var(--red);
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.26em;padding:6px 12px;transform:rotate(6deg) scale(0);
-  background:var(--paper);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
-.drum-stamp.hit{transform:rotate(-8deg) scale(1)}
+/* окно барабана: фиксированная высота, по краям видны куски соседних надписей */
+.slot-window{position:relative;height:150px;overflow:hidden;border:1px solid rgba(36,26,16,.35);
+  background:rgba(36,26,16,.06);box-shadow:inset 0 4px 14px rgba(36,26,16,.18)}
+.slot-window::before,.slot-window::after{content:"";position:absolute;left:0;right:0;height:40px;pointer-events:none;z-index:2}
+.slot-window::before{top:0;background:linear-gradient(180deg,rgba(231,220,193,.92),rgba(231,220,193,0))}
+.slot-window::after{bottom:0;background:linear-gradient(0deg,rgba(231,220,193,.92),rgba(231,220,193,0))}
+/* «прицельная» рамка центральной строки */
+.slot-window .payline{position:absolute;left:0;right:0;top:50%;height:64px;transform:translateY(-50%);
+  border-top:1px dashed rgba(163,32,32,.30);border-bottom:1px dashed rgba(163,32,32,.30);pointer-events:none;z-index:1}
+/* лента */
+.slot-reel{display:flex;flex-direction:column;will-change:transform}
+.slot-reel .cell{height:64px;flex:none;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:2px 16px;font-family:var(--mono);color:var(--ink);font-size:.95rem;letter-spacing:.03em;line-height:1.25}
+/* длинные надписи — мельче шрифт */
+.slot-reel .cell.len2{font-size:.8rem}
+.slot-reel .cell.len3{font-size:.68rem}
+
+/* кнопка барабана — главный акцент блока */
+/* кнопка барабана — старая, затёртая до блеска в центре */
+.drum .btn{
+  margin-top:22px;
+  width:100%;
+  justify-content:center;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23p)' opacity='0.30'/></svg>"),
+    radial-gradient(ellipse 62% 58% at 50% 46%, rgba(231,220,193,.18), transparent 72%), /* вытертый «пальцами» центр */
+    linear-gradient(160deg, #96423a, #7d332c 60%, #6b2a24);
+  background-blend-mode:overlay, normal, normal;
+  border:1px solid rgba(58,20,16,.6);
+  border-radius:10px 6px 12px 7px / 7px 12px 6px 10px;  /* неровные, «сбитые» углы */
+  color:rgba(239,230,207,.66);                          /* полустёртая надпись */
+  font-size:.85rem;
+  letter-spacing:.3em;
+  padding:16px 26px;
+  transform:rotate(-.4deg);
+  text-shadow:0 1px 0 rgba(0,0,0,.4);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,.45),   /* вдавленная, а не выпуклая */
+    inset 0 -1px 0 rgba(239,230,207,.10),
+    0 1px 0 rgba(239,230,207,.22);     /* фаска снизу, как у старой клавиши */
+  transition:transform .15s ease, box-shadow .15s ease, color .2s ease;
+}
+.drum .btn:hover{
+  color:rgba(239,230,207,.88);         /* при наведении надпись «проявляется» */
+  box-shadow:
+    inset 0 2px 7px rgba(0,0,0,.5),
+    inset 0 -1px 0 rgba(239,230,207,.10),
+    0 1px 0 rgba(239,230,207,.22);
+}
+.drum .btn:active{
+  transform:rotate(-.4deg) translateY(1px);
+  box-shadow:inset 0 3px 9px rgba(0,0,0,.55);
+}
 
 /* ============ ГЛАВА II — КУХНЯ ============ */
-.food-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;margin-top:54px;align-items:start}
-.food-main{transform:rotate(-.8deg);overflow:hidden}
-.food-main .ph{aspect-ratio:16/9}
-.food-main .fc{padding:28px clamp(20px,3vw,40px) 34px}
-.food-main h3{font-size:clamp(1.5rem,2.8vw,2.1rem);color:var(--ink)}
-.food-main .tag{font-family:var(--disp);font-style:italic;color:var(--red);margin:6px 0 12px}
-.food-main .specs{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(36,26,16,.6);margin-top:16px;border-top:1px solid rgba(36,26,16,.25);padding-top:14px}
-.food-col{display:grid;gap:28px}
-.food-card{overflow:hidden}
-.food-card:nth-child(odd){transform:rotate(1.1deg)}
-.food-card:nth-child(even){transform:rotate(-1.2deg)}
-.food-card .ph{aspect-ratio:16/7}
-.food-card .fc{padding:20px 24px 26px}
-.food-card h3{font-size:1.3rem;color:var(--ink);margin-bottom:12px}
-.food-card .m-item{padding:5px 0}
+/* ============ ГЛАВА II — КУХНЯ ============ */
+.food-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;margin-top:54px;align-items:stretch}
+.food-main,.food-card{display:flex;flex-direction:column;overflow:hidden}
+/* лёгкий разброс, как разложенные меню */
+.food-main{transform:rotate(-.7deg)}
+.food-card:nth-child(2){transform:rotate(.9deg)}
+.food-card:nth-child(3){transform:rotate(-.9deg)}
+.food-card:nth-child(4){transform:rotate(.7deg)}
+/* «фото» — гибкое, но с полом: разница высот впитывается по чуть-чуть */
+.food-main .ph{flex:1 1 auto;min-height:220px}
+.food-card .ph{flex:1 1 auto;min-height:140px}
+.food-main .fc{padding:26px clamp(20px,3vw,36px) 30px}
+.food-main h3{font-size:clamp(1.4rem,2.6vw,1.9rem);color:var(--ink)}
+.food-main .tag{font-family:var(--disp);font-style:italic;color:var(--red);margin:6px 0 10px}
+.food-main p{font-size:.95rem}
+.food-main .specs{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(36,26,16,.6);margin-top:14px;border-top:1px solid rgba(36,26,16,.25);padding-top:12px}
+.food-card .fc{padding:18px 22px 22px}
+.food-card h3{font-size:1.25rem;color:var(--ink);margin-bottom:10px}
+.food-card .m-item{padding:4px 0}
 .sides{margin-top:34px;text-align:center;font-family:var(--mono);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim)}
 .sides i{font-style:normal;color:var(--red)}
-
+@media (max-width:1000px){
+  .food-grid{grid-template-columns:1fr}
+  .food-main,.food-card{transform:none}
+  .food-main .ph{flex:none;aspect-ratio:16/9;min-height:0}
+  .food-card .ph{flex:none;aspect-ratio:16/7;min-height:0}
+}
 /* ============ ГЛАВА III — ПЛАН ============ */
 .plan-grid{display:grid;grid-template-columns:380px 1fr;gap:clamp(30px,5vw,80px);align-items:start}
 .plan-rail{position:sticky;top:96px}
