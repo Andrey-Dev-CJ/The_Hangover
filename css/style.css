@@ -533,3 +533,31 @@ footer{border-top:1px solid var(--line);padding:60px 0 70px;text-align:center;ba
   html.js .lm>span{transform:none}
   .ticker-inner{animation:none;flex-wrap:wrap}
 }
+
+/* ============ МОБИЛЬНАЯ СТРАХОВКА ============ */
+/* заголовок всегда считается от ширины экрана и не вылезает */
+.hero h1{font-size:clamp(1.7rem,10vw,5rem)}
+
+@media (max-width:480px){
+  .wrap{padding:0 16px}
+  .poster{padding:18px;outline-offset:6px}
+  .hero-eyebrow{font-size:.66rem;letter-spacing:.12em}
+  .hero h1{font-size:clamp(1.55rem,9.5vw,2.6rem);letter-spacing:.02em}
+  .hero .sub{font-size:clamp(.95rem,3.6vw,1.25rem)}
+  .hero .meta{font-size:.76rem}
+  .cd{gap:8px}
+  .cd-cell{min-width:70px;padding:10px 8px 8px}
+  .cd-cell b{font-size:1.5rem}
+  .don-frame{width:100%;max-width:280px;margin:0 auto}
+  .stamp{right:0}
+  .topbar{padding:0 14px}
+  .topnav a{padding:8px 9px;font-size:.66rem;letter-spacing:.14em}
+}
+
+@media (max-width:360px){
+  /* iPhone SE и уже */
+  .hero h1{font-size:clamp(1.4rem,9vw,2.2rem)}
+  .cd-cell{min-width:62px}
+  .cd-cell b{font-size:1.4rem}
+  .don-frame{max-width:260px}
+}
