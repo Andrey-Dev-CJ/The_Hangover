@@ -109,7 +109,7 @@ $("#codex").innerHTML = DATA.codex.map(c =>
 })();
 
 /* ---------- 8. Игры ---------- */
-$("#games").innerHTML = DATA.games.map((g, i) => `
+$("#games-grid").innerHTML = DATA.games.map((g, i) => `
   <article class="gcard g${i % 4 + 1} rv" style="--d:${(.05 + i * .07).toFixed(2)}s">
     <div class="ph kb"><img src="${esc(g.img)}" alt="${esc(g.alt)}"></div>
     <div class="gbody">
