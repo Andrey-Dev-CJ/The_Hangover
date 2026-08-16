@@ -41,6 +41,7 @@ $("#codex").innerHTML = DATA.codex.map(c =>
 })();
 
 /* ---------- 5. Барная карта ---------- */
+/* ---------- 5. Барная карта (с автобалансом колонок) ---------- */
 (function setupBar(){
   const row = i => `
     <div class="m-item">
@@ -48,17 +49,47 @@ $("#codex").innerHTML = DATA.codex.map(c =>
       <span class="dots"></span><span class="price">${esc(i.price)}</span>
     </div>`;
 
-  $("#bar-groups").innerHTML = DATA.bar.groups.map(g => `
+  const groupHTML = g => `
     <div class="m-group">
       <h4>${esc(g.title)} <span>${esc(g.sub || "")}</span></h4>
       ${g.items.map(row).join("")}
-    </div>`).join("");
-
-  $("#bar-shots").innerHTML = `
-    <div class="m-group">
-      <h4>${esc(DATA.bar.shots.title)} <span>${esc(DATA.bar.shots.sub || "")}</span></h4>
-      ${DATA.bar.shots.items.map(row).join("")}
     </div>`;
+
+  // Считаем «вес» каждой группы (количество items) и делим на две колонки
+  const groups = DATA.bar.groups.slice();
+  const totalWeight = groups.reduce((s, g) => s + g.items.length, 0);
+  const targetHalf = totalWeight / 2;
+
+  let acc = 0, splitAt = 0;
+  for (let i = 0; i < groups.length; i++) {
+    acc += groups[i].items.length;
+    if (acc >= targetHalf) { splitAt = i + 1; break; }
+  }
+  if (splitAt === 0) splitAt = Math.ceil(groups.length / 2);
+
+  const leftGroups = groups.slice(0, splitAt);
+  const rightGroups = groups.slice(splitAt);
+
+  $("#bar-groups").innerHTML = leftGroups.map(groupHTML).join("");
+
+  // Правая колонка: оставшиеся группы + шоты + барабан + note
+  $("#bar-right").innerHTML =
+    rightGroups.map(groupHTML).join("") +
+    `<div class="m-group">
+       <h4>${esc(DATA.bar.shots.title)} <span>${esc(DATA.bar.shots.sub || "")}</span></h4>
+       ${DATA.bar.shots.items.map(row).join("")}
+     </div>` +
+    `<div class="drum rv" style="--d:.15s">
+       <span class="drum-stamp" id="drum-stamp">Штраф</span>
+       <h4>Штрафной барабан</h4>
+       <p class="dh">рулетка для провинившихся и смелых</p>
+       <div class="slot-window" aria-live="polite">
+         <div class="slot-reel" id="slot-reel"></div>
+         <span class="payline" aria-hidden="true"></span>
+       </div>
+       <button class="btn" id="spin" type="button">Крутить ✦</button>
+     </div>` +
+    `<p class="bar-note" id="bar-note"></p>`;
 
   $("#bar-note").innerHTML = DATA.bar.note;
 })();

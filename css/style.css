@@ -565,6 +565,7 @@ footer{border-top:1px solid var(--line);padding:60px 0 70px;text-align:center;ba
 
 
 
+
 /* ============ МОДАЛЬНОЕ ОКНО РЕЦЕПТОВ ============ */
 .recipe-modal{
   position:fixed;inset:0;z-index:1000;
@@ -610,8 +611,6 @@ footer{border-top:1px solid var(--line);padding:60px 0 70px;text-align:center;ba
 .recipe-ingredients .ing-item{font-weight:500}
 .recipe-ingredients .ing-amount{font-family:var(--mono);font-size:.85rem;color:var(--red);white-space:nowrap}
 .recipe-modal-section p{font-size:.95rem;line-height:1.6;color:rgba(36,26,16,.85)}
-
-/* кликабельные строки меню */
 .m-item[data-recipe]{cursor:pointer;transition:background .2s ease;padding:7px 4px;margin:0 -4px;border-radius:4px}
 .m-item[data-recipe]:hover{background:rgba(201,162,39,.12)}
 .m-item[data-recipe]:hover .name{color:var(--red)}
