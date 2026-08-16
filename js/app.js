@@ -65,10 +65,12 @@ $("#codex").innerHTML = DATA.codex.map(c =>
 
 /* ---------- 6. Кухня ---------- */
 /* ---------- 6. Кухня ---------- */
+/* ---------- 6. Кухня (поддерживает массив featured) ---------- */
 (function setupFood(){
-  const f = DATA.food.featured;
-  const featuredHTML = `
-    <article class="food-main paper rv" style="--d:.05s">
+  const arr = Array.isArray(DATA.food.featured) ? DATA.food.featured : [DATA.food.featured];
+
+  const featuredHTML = arr.map((f, i) => `
+    <article class="food-main paper rv" style="--d:${(.05 + i * .06).toFixed(2)}s">
       <span class="pin" style="top:-7px;left:50%;margin-left:-7px"></span>
       <div class="ph kb"><img src="${esc(f.img)}" alt="${esc(f.alt)}"></div>
       <div class="fc">
@@ -77,10 +79,10 @@ $("#codex").innerHTML = DATA.codex.map(c =>
         <p>${esc(f.text)}</p>
         <div class="specs">${f.specs.map(s => `<span>${esc(s)}</span>`).join("")}</div>
       </div>
-    </article>`;
+    </article>`).join("");
 
   const cardsHTML = DATA.food.cards.map((c, i) => `
-    <article class="food-card paper rv" style="--d:${(.1 + i * .06).toFixed(2)}s">
+    <article class="food-card paper rv" style="--d:${(.1 + (arr.length + i) * .06).toFixed(2)}s">
       <div class="ph kb"><img src="${esc(c.img)}" alt="${esc(c.alt)}"></div>
       <div class="fc">
         <h3>${esc(c.title)}</h3>
@@ -206,53 +208,87 @@ $("#games-grid").innerHTML = DATA.games.map((g, i) => `
   upd();
 })();
 
-/* ---------- 13. Штрафной барабан ---------- */
-/* ---------- 13. Штрафной барабан (лента сверху вниз, как в слотах) ---------- */
+
+/* ---------- 13. Штрафной барабан (единое непрерывное вращение) ---------- */
 (function setupDrum(){
-  const F = DATA.bar.fanty;
-  if (!F.length) return;
+  const src = (DATA.bar.fanty && DATA.bar.fanty.length)
+    ? DATA.bar.fanty
+    : DATA.bar.shots.items.map(s => `${s.name} — залпом`);
+  if (!src.length) return;
+
   const btn = $("#spin"), reel = $("#slot-reel"), stamp = $("#drum-stamp"), win = reel.parentElement;
-  const H = 64, REPEAT = 4, N = F.length;
+  const H = 64, REPEAT = 4;
+  let N = src.length, current = 0, busy = false;
 
-  // лента: фанты, повторённые несколько раз; длинный текст — мельче шрифт
-  reel.innerHTML = Array.from({ length: REPEAT }, () =>
-    F.map(t => `<div class="cell${t.length > 44 ? " len3" : t.length > 28 ? " len2" : ""}">${esc(t)}</div>`).join("")
-  ).join("");
-
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const centerT = i => win.clientHeight / 2 - H / 2 - i * H;
-  let current = 0, busy = false;
+
+  const build = () => {
+    const F = shuffle([...src]);
+    N = F.length;
+    reel.innerHTML = Array.from({ length: REPEAT }, () =>
+      F.map(t => `<div class="cell${t.length > 44 ? " len3" : t.length > 28 ? " len2" : ""}">${esc(t)}</div>`).join("")
+    ).join("");
+  };
+
+  build();
   reel.style.transform = `translateY(${centerT(0)}px)`;
   addEventListener("resize", () => { reel.style.transform = `translateY(${centerT(current)}px)`; });
 
-  const hit = () => {
-    stamp.classList.add("hit");
-    setTimeout(() => stamp.classList.remove("hit"), 1400);
+  const hit = () => { stamp.classList.add("hit"); setTimeout(() => stamp.classList.remove("hit"), 1400); };
+
+  const outCubic = t => 1 - Math.pow(1 - t, 3);
+  const outQuart = t => 1 - Math.pow(1 - t, 4);
+  const inOut    = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+  const run = (segs, done) => {
+    let i = 0;
+    const next = () => {
+      if (i >= segs.length) return done();
+      const sg = segs[i++], t0 = performance.now();
+      (function fr(now){
+        const p = Math.min(1, (now - t0) / sg.dur);
+        reel.style.transform = `translateY(${sg.a + (sg.b - sg.a) * sg.ease(p)}px)`;
+        if (p < 1) requestAnimationFrame(fr); else next();
+      })(t0);
+    };
+    next();
   };
 
   btn.addEventListener("click", () => {
     if (busy) return; busy = true;
-    const r = Math.random() * N | 0;          // выпавший фант
-    const f = r;                              // финальная позиция (первая копия)
-    const s = Math.min(current + 3 * N, REPEAT * N - 1); // старт глубоко в ленте
-    const from = centerT(s), to = centerT(f); // лента поедет СВЕРХУ ВНИЗ
+    build();
+    const f = Math.random() * N | 0;
+    const span = 2 * N + (Math.random() * (N + 1) | 0);
+    const s = Math.min(REPEAT * N - 1, f + span);
+    const from = centerT(s), to = centerT(f);
+    const base = 5200 + Math.random() * 2400;
+    const mode = Math.random();
 
-    if (REDUCED) {
-      current = f;
-      reel.style.transform = `translateY(${to}px)`;
-      hit(); busy = false; return;
+    if (REDUCED) { current = f; reel.style.transform = `translateY(${to}px)`; hit(); busy = false; return; }
+
+    let segs;
+    if (mode < 0.38) {
+      // ИНЕРЦИЯ: торможение заканчивается ЗА центром, и лента сама
+      // «качается» обратно — это хвост одного движения, без остановки
+      const ov = H * (0.35 + Math.random() * 0.25);
+      segs = [
+        { a: from, b: to + ov, dur: base,          ease: outCubic },
+        { a: to + ov, b: to,   dur: 450 + Math.random() * 300, ease: inOut },
+      ];
+    } else if (mode < 0.72) {
+      // НАПРЯЖЕНИЕ: одна непрерывная кривая с длинным хвостом —
+      // последняя ячейка доползает мучительно медленно
+      segs = [{ a: from, b: to, dur: base + 1500, ease: outQuart }];
+    } else {
+      // КЛАССИКА: плавное докачивание одной кривой
+      segs = [{ a: from, b: to, dur: base, ease: outCubic }];
     }
 
-    const dur = 3800 + Math.random() * 800, t0 = performance.now();
-    const ease = t => 1 - Math.pow(1 - t, 4); // разгон и долгое «докачивание»
-    reel.style.transform = `translateY(${from}px)`;
-    (function frame(now){
-      const p = Math.min(1, (now - t0) / dur);
-      reel.style.transform = `translateY(${from + (to - from) * ease(p)}px)`;
-      if (p < 1) requestAnimationFrame(frame);
-      else { current = f; hit(); busy = false; }
-    })(t0);
+    run(segs, () => { current = f; hit(); busy = false; });
   });
 })();
+
 
 /* ---------- 14. Лёгкий 3D-наклон карточек игр ---------- */
 (function setupTilt(){
@@ -294,5 +330,58 @@ $("#games-grid").innerHTML = DATA.games.map((g, i) => `
   document.querySelectorAll("img").forEach(img => {
     img.addEventListener("error", () => fix(img));
     if (img.complete && img.naturalWidth === 0 && img.src) fix(img); // уже протухла до бинда
+  });
+})();
+
+
+
+/* ---------- 16. Модальное окно рецептов ---------- */
+(function setupRecipes(){
+  const modal = $("#recipe-modal");
+  const title = $("#recipe-modal-title");
+  const ingredients = $("#recipe-ingredients");
+  const serving = $("#recipe-serving");
+  const secret = $("#recipe-secret");
+  const secretSection = $("#recipe-secret-section");
+  const closeBtn = $("#recipe-modal-close");
+
+  if (!modal || !RECIPES) return;
+
+  const open = (name) => {
+    const r = RECIPES[name];
+    if (!r) return;
+    title.textContent = name;
+    ingredients.innerHTML = r.ingredients.map(i =>
+      `<li><span class="ing-item">${esc(i.item)}</span><span class="ing-amount">${esc(i.amount)}</span></li>`
+    ).join("");
+    serving.textContent = r.serving;
+    if (r.secret) {
+      secret.textContent = r.secret;
+      secretSection.style.display = "";
+    } else {
+      secretSection.style.display = "none";
+    }
+    modal.classList.add("active");
+    modal.setAttribute("aria-hidden", "false");
+  };
+
+  const close = () => {
+    modal.classList.remove("active");
+    modal.setAttribute("aria-hidden", "true");
+  };
+
+  closeBtn.addEventListener("click", close);
+  modal.addEventListener("click", e => { if (e.target === modal) close(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && modal.classList.contains("active")) close(); });
+
+  // клики по строкам меню
+  document.querySelectorAll(".m-item").forEach(el => {
+    const nameEl = el.querySelector(".name");
+    if (!nameEl) return;
+    const name = nameEl.textContent.trim();
+    if (RECIPES[name]) {
+      el.setAttribute("data-recipe", name);
+      el.addEventListener("click", () => open(name));
+    }
   });
 })();

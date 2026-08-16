@@ -14,6 +14,31 @@
 </head>
 <body>
 
+  <!-- Модальное окно рецептов -->
+<div class="recipe-modal" id="recipe-modal" aria-hidden="true">
+  <div class="recipe-modal-content">
+    <button class="recipe-modal-close" id="recipe-modal-close" aria-label="Закрыть">✕</button>
+    <div class="recipe-modal-header">
+      <h3 class="recipe-modal-title" id="recipe-modal-title"></h3>
+      <p class="recipe-modal-subtitle">Секретный рецепт Семьи</p>
+    </div>
+    <div class="recipe-modal-body">
+      <div class="recipe-modal-section">
+        <h4>Ингредиенты</h4>
+        <ul class="recipe-ingredients" id="recipe-ingredients"></ul>
+      </div>
+      <div class="recipe-modal-section">
+        <h4>Подача</h4>
+        <p id="recipe-serving"></p>
+      </div>
+      <div class="recipe-modal-section" id="recipe-secret-section">
+        <h4>Секрет бармена</h4>
+        <p id="recipe-secret"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ======== ВЕРХНЯЯ ПЛАНКА ======== -->
 <header class="topbar">
   <div class="brand">LA FAMIGLIA <b>✦</b> <span>МАЛЬЧИШНИК</span></div>
@@ -188,8 +213,9 @@
   </div>
 </footer>
 
-<script src="js/config.js?v=4"></script>
-<script src="js/data.js?v=4"></script>
-<script src="js/app.js?v=4"></script>
+<script src="js/config.js?v=6"></script>
+<script src="js/data.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
+<script src="js/recipes.js?v=6"></script>
 </body>
 </html>
